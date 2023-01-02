@@ -1,0 +1,25 @@
+{
+  "name": "mycommerce-backend",
+  "version": "1.0.0",
+  "description": "commerce for backend",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js ",
+    "bananinha": "node index.js bananinha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucasCalabria7/MyCommerce-Backend.git"
+  },
+  "keywords": [
+    "firstnode"
+  ],
+  "author": "calabria",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LucasCalabria7/MyCommerce-Backend/issues"
+  },
+  "homepage": "https://github.com/LucasCalabria7/MyCommerce-Backend#readme"
+}
