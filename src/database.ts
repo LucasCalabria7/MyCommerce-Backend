@@ -1,7 +1,7 @@
 import {TUser} from "./types"
 import {TProduct} from "./types"
 import {TPurchase} from "./types"
-import { Category } from "./types"
+import { TCategory } from "./types"
 
 export const users: TUser[] = [
     {
@@ -25,25 +25,25 @@ export const products: TProduct[] = [
         id: "prodid1",
         name: "Nike",
         price: 1000,
-        category: Category.CLOTHES_AND_SHOES,
+        category: TCategory.CLOTHES_AND_SHOES,
     },
     {
         id: "prodid90",
         name: "Nike",
         price: 500,
-        category: Category.CLOTHES_AND_SHOES,
+        category: TCategory.CLOTHES_AND_SHOES,
     },
     {
         id: "prodid2",
         name: "Adidas",
         price: 500,
-        category: Category.CLOTHES_AND_SHOES,
+        category: TCategory.CLOTHES_AND_SHOES,
     },
     {
         id: "prodid3",
         name: "Bape",
         price: 1000,
-        category: Category.CLOTHES_AND_SHOES,
+        category: TCategory.CLOTHES_AND_SHOES,
     },
 ]
 export const purchase: TPurchase[] = [
@@ -81,7 +81,7 @@ export function getAllUsers ():Array<object> {
     return users
 }
 
-export function createProduct (id: string, name: string, price: number, category: Category): string {
+export function createProduct (id: string, name: string, price: number, category: TCategory): string {
     let newProduct = {
         id, 
         name,

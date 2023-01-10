@@ -1,4 +1,4 @@
-export enum Category {
+export enum TCategory {
     ACCESSORIES = "Acessórios",
     CLOTHES_AND_SHOES = "Roupas e calçados",
     ELECTRONICS = "Eletrônicos"
@@ -14,7 +14,7 @@ export type TProduct = {
     id: string 
     name: string
     price: number
-    category: Category
+    category: TCategory
 }
 
 export type TPurchase = {
