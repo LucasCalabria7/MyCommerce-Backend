@@ -5,9 +5,9 @@ export enum TCategory {
 }
 
 export type TUser = {
-    id: string 
-    email: string
-    password: string
+    id: string
+    email: string 
+    password: string 
 }
 
 export type TProduct = {
