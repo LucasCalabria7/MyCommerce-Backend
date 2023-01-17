@@ -6,11 +6,6 @@ CREATE TABLE
         password TEXT NOT NULL
     );
 
-    INSERT INTO users(id, email, password)
-    VALUES ("u7t8y9", "kevindurant@reaper.com", "kd2023");
-
-    SELECT * FROM users;
-
     CREATE TABLE
     products (
         id TEXT PRIMARY KEY UNIQUE NOT NULL,
@@ -19,7 +14,68 @@ CREATE TABLE
         category TEXT NOT NULL
     );
 
-    INSERT INTO products(id, name, price, category)
-    VALUES ("prodid5", "Jordan 4 Military Black", 3000, "CLOTHES_SHOES");
+    --GetAllUsers
+    SELECT * FROM users;
 
+
+    --GetAllProducts
     SELECT * FROM products;
+
+
+    --SearchProductByName
+    SELECT * FROM products
+    WHERE name LIKE "Jordan%";
+
+
+    --CreateUSer
+    INSERT INTO users(id, email, password)
+    VALUES ("n1hy2", "lbj@king.com", "kingjames");
+
+
+    --CreateProduct
+        INSERT INTO products(id, name, price, category)
+        VALUES ("4fsd98", "Dunk Low Parma", 2250, "CLOTHES_SHOES");
+
+
+        --SearchProductsById
+        SELECT * FROM products 
+        WHERE id = "prodid1";
+
+
+        --DeleteProductById
+        DELETE FROM users
+        WHERE id = "n1hy2";
+
+
+        --DeleteProductById
+        DELETE FROM products
+        WHERE id = "4fsd98";
+
+
+        --EditUSerById
+        UPDATE users
+        SET password = "bananinha123"
+        WHERE id = "n1hy2";
+
+
+        --EditProductById
+        UPDATE products
+        SET price = 50
+        WHERE id = "4fsd98";
+
+
+        --GetUserCrescentOrder
+        SELECT * FROM users
+        ORDER BY email ASC;
+
+
+        --GetProductsByPrice
+        SELECT * FROM products
+        ORDER BY price ASC
+        LIMIT 20;
+
+
+        --GetProductsByBetweenPrice
+        SELECT * FROM products
+        WHERE price >=1000 AND price <=3000
+        ORDER BY price ASC;
