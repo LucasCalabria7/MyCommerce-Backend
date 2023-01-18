@@ -14,6 +14,18 @@ CREATE TABLE
         category TEXT NOT NULL
     );
 
+    CREATE TABLE 
+    purchases (
+        id TEXT PRIMARY KEY UNIQUE NOT NULL,
+        total_price REAL UNIQUE NOT NULL,
+        paid INTEGER NOT NULL,
+        delivered_at TEXT ,
+        buyer_id TEXT NOT NULL,
+        FOREIGN KEY (buyer_id) REFERENCES users (id)
+    );
+
+    DROP TABLE purchases;
+
     --GetAllUsers
     SELECT * FROM users;
 
@@ -35,6 +47,36 @@ CREATE TABLE
     --CreateProduct
         INSERT INTO products(id, name, price, category)
         VALUES ("4fsd98", "Dunk Low Parma", 2250, "CLOTHES_SHOES");
+
+
+        --CreatePurchase
+        INSERT INTO purchases (id, total_price, paid, delivered_at, buyer_id)
+        VALUES ("purchase1", 3000, 1, NULL, "n1hy2" ),
+        ("purchase2", 1500, 1, NULL, "n1hy2"),
+        ("purchase3", 4500, 1, NULL, "as9d87"),
+        ("purchase4", 1000, 1, NULL, "as9d87"),
+        ("purchase5", 2750, 1, NULL, "n1vb34"),
+        ("purchase6", 5000, 1, NULL, "n1vb34"),
+        ("purchase7", 1250, 1, NULL, "u7t8y9"),
+        ("purchase8", 3350, 1, NULL, "u7t8y9");
+
+        SELECT * FROM purchases;
+
+        --SetDeliveryWithDateTime
+        UPDATE purchases
+        SET delivered_at = DATETIME() 
+        WHERE id = "purchase2";
+
+
+        --GetUsersAllPurchases
+        SELECT users.id AS user_id,
+        users.email,
+        purchases.id AS purchase_id,
+        purchases.total_price
+        FROM users
+        INNER JOIN purchases
+        ON users.id = purchases.buyer_id
+        WHERE users.id= "n1hy2";
 
 
         --SearchProductsById
