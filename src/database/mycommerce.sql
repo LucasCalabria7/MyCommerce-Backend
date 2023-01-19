@@ -79,6 +79,55 @@ CREATE TABLE
         WHERE users.id= "n1hy2";
 
 
+        --CreatePurchaseField
+        CREATE TABLE 
+        purchases_products(
+            purchase_id TEXT NOT NULL,
+            product_id TEXT NOT NULL,
+            quantity INTEGER NOT NULL,
+            FOREIGN KEY (purchase_id) REFERENCES purchases (id),
+            FOREIGN KEY (product_id) REFERENCES products (id)
+        );
+
+        DROP TABLE purchases_products;
+
+
+        --CreateListOfPurchases
+        INSERT INTO purchases_products (purchase_id, product_id, quantity)
+        VALUES("purchase1", "4fsd98", 2),
+        ("purchase2", "prodid1", 1),
+        ("purchase6", "prodid2", 2);
+
+
+        SELECT * FROM purchases_products;
+
+
+        --GetRelationPurchasesProducts
+        SELECT * FROM purchases
+        LEFT JOIN purchases_products
+        ON purchases_products.purchase_id = purchases.id
+        INNER JOIN products
+        ON purchases_products.product_id = products.id;
+
+
+        --RefactorRelationPurchaseProducts
+        SELECT 
+        purchases.id AS purchaseId,
+        purchases.total_price AS totalPrice,
+        purchases.paid,
+        purchases.delivered_at AS deliverDay,
+        purchases.buyer_id AS buyerId,
+        products.id AS productId ,
+        products.name AS productName ,
+        products.price ,
+        products.category 
+        FROM purchases_products
+        JOIN purchases
+        ON purchases_products.purchase_id = purchases.id
+        INNER JOIN products
+        ON purchases_products.product_id= products.id;
+
+
         --SearchProductsById
         SELECT * FROM products 
         WHERE id = "prodid1";
