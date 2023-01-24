@@ -2,8 +2,10 @@
 CREATE TABLE
     users(
         id TEXT PRIMARY KEY UNIQUE NOT NULL,
+        name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL
+        password TEXT NOT NULL,
+        createdAt TEXT DEFAULT (DATETIME('now', 'localtime')) NOT NULL
     );
 
     CREATE TABLE
@@ -11,20 +13,21 @@ CREATE TABLE
         id TEXT PRIMARY KEY UNIQUE NOT NULL,
         name TEXT UNIQUE NOT NULL,
         price INTEGER NOT NULL,
-        category TEXT NOT NULL
+        description TEXT NOT NULL,
+        imageURL TEXT NOT NULL
     );
 
     CREATE TABLE 
     purchases (
         id TEXT PRIMARY KEY UNIQUE NOT NULL,
+        buyer_id TEXT NOT NULL,
         total_price REAL UNIQUE NOT NULL,
         paid INTEGER NOT NULL,
-        delivered_at TEXT ,
-        buyer_id TEXT NOT NULL,
+        createdAt TEXT DEFAULT (DATETIME('now', 'localtime')) NOT NULL ,
         FOREIGN KEY (buyer_id) REFERENCES users (id)
     );
 
-    DROP TABLE purchases;
+    DROP TABLE users;
 
     --GetAllUsers
     SELECT * FROM users;
@@ -34,31 +37,41 @@ CREATE TABLE
     SELECT * FROM products;
 
 
+    --GetAllPurchases
+    SELECT * FROM purchases;
+
+
     --SearchProductByName
     SELECT * FROM products
     WHERE name LIKE "Jordan%";
 
 
     --CreateUSer
-    INSERT INTO users(id, email, password)
-    VALUES ("n1hy2", "lbj@king.com", "kingjames");
+    INSERT INTO users(id, name, email, password)
+    VALUES ("user1","Lebron James", "lbj@king.com", "kingjames"),
+    ("user2","Neymar JR", "neynday@gmail.com", "neymar123"),
+    ("user3", "Lucas Calabria","lucas123@gmail.com", "lucas123"),
+    ("user4", "Messi","leomessi@gmail.com", "cup2022");
 
 
     --CreateProduct
-        INSERT INTO products(id, name, price, category)
-        VALUES ("4fsd98", "Dunk Low Parma", 2250, "CLOTHES_SHOES");
+        INSERT INTO products(id, name, price, description, imageURL)
+        VALUES ("prodid1", "Dunk Low Parma", 2250, "Nike Shoe Limited Edition", "randompic.jpg"),
+        ("prodid2", "Air Froce 1 Low", 900, "Classic Nike Shoe", "randompic.jpg"),
+        ("prodid3", "Jordan 1 Chicago", 2000, "The Michael Jordan Oficial Sneaker", "randompic.jpg"),
+        ("prodid4", "Jordan 4 Travis Scott", 5000, "Straight UP!", "randompic.jpg");
 
 
         --CreatePurchase
-        INSERT INTO purchases (id, total_price, paid, delivered_at, buyer_id)
-        VALUES ("purchase1", 3000, 1, NULL, "n1hy2" ),
-        ("purchase2", 1500, 1, NULL, "n1hy2"),
-        ("purchase3", 4500, 1, NULL, "as9d87"),
-        ("purchase4", 1000, 1, NULL, "as9d87"),
-        ("purchase5", 2750, 1, NULL, "n1vb34"),
-        ("purchase6", 5000, 1, NULL, "n1vb34"),
-        ("purchase7", 1250, 1, NULL, "u7t8y9"),
-        ("purchase8", 3350, 1, NULL, "u7t8y9");
+        INSERT INTO purchases (id, buyer_id, total_price, paid)
+        VALUES ("purchase1","user1", 3000, 1),
+        ("purchase2","user1", 1500, 1),
+        ("purchase3","user2", 4500, 1),
+        ("purchase4","user2", 1000, 1),
+        ("purchase5","user3", 2750, 1),
+        ("purchase6","user3", 5000, 1),
+        ("purchase7","user4", 1250, 1),
+        ("purchase8","user4", 3350, 1);
 
         SELECT * FROM purchases;
 

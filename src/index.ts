@@ -16,10 +16,10 @@ app.listen(3003, () => {
 //GetAllUsers
 app.get('/users', async (req: Request, res: Response) => {
     try {
-        const result = await db.raw(`
-        SELECT * FROM users;
-        `)
+
+        const result = await db("users")
         res.status(200).send({users: result})
+
     } catch (error: any) {
         console.log(error)
 
@@ -34,11 +34,30 @@ app.get('/users', async (req: Request, res: Response) => {
 //GetAllProducts
 app.get('/products', async (req: Request, res: Response) => {
     try {
-        const result = await db.raw(`
-        SELECT * FROM products;
-        `)
+
+        const result = await db("products")
         res.status(200).send({products: result})
+
     } catch (error: any) {
+        console.log(error)
+
+        if (res.statusCode === 200) {
+            res.status(500)
+        }
+
+        res.send(error.message)
+    }
+})
+
+
+//GetAllPurchases
+app.get('/purchases', async (req: Request, res: Response) => {
+    try {
+
+        const result = await db("purchases")
+        res.status(200).send({purchases: result})
+    } catch (error: any) {
+
         console.log(error)
 
         if (res.statusCode === 200) {
@@ -59,11 +78,9 @@ app.get('/products/search', async  (req: Request, res: Response) => {
             throw new Error("Your search must have more then 1 letter")
         }
 
-        const result = await db.raw(`
-        SELECT * FROM products
-        WHERE name LIKE "%${q}%";
-        `)
+        const result = await db("products").where("name", "LIKE", `%${q}%`)
         res.status(200).send(result)
+
     } catch (error: any) {
         console.log(error)
 
@@ -82,7 +99,6 @@ app.post('/users', async (req: Request, res: Response) => {
         const name = req.body.name as string 
         const email = req.body.email as string
         const password = req.body.password as string
-        const createdAt = req.body.createdAt as string
 
             if (id !== undefined) {
                 if (id.length < 1) {
@@ -95,15 +111,20 @@ app.post('/users', async (req: Request, res: Response) => {
                 if (email.includes("@")) {
                 } else {
                     res.status(400)
-                    throw new Error("You can't create 2 users with the same email")
+                    throw new Error("Invalid Email, please try again.")
                 }
             }
 
-        await db.raw(`
-        INSERT INTO users (id, name, password)
-        VALUES("${id}","${name}", "${email}", "${password}", "${createdAt}");
-        `)
+        const newUser = {
+            id, 
+            name,
+            email,
+            password
+        }
+
+        await db("users").insert(newUser)
         res.status(200).send(`${name}, Created successfully.`)
+
     } catch (error: any) {
         console.log(error)
 
@@ -137,12 +158,16 @@ app.post('/products', async (req: Request, res: Response) => {
             throw new Error("Invalid id or name, must be a bigger than 1")
         }
 
+        const newProduct = {
+            id, 
+            name,
+            price,
+            description,
+            imageUrl
+        }
+        await db("products").insert(newProduct)
+        res.status(200).send(`${name} created sucesfully!`)
 
-        await db.raw(`
-        INSERT INTO products (id, name, price, category)
-        VALUES("${id}", "${name}", "${price}, "${description}", "${imageUrl}");
-        `)
-        res.status(201).send(`${name} created sucesfully!`)
     } catch (error: any) {
         console.log(error)
 
@@ -158,36 +183,34 @@ app.post('/products', async (req: Request, res: Response) => {
 app.post('/purchases', async (req: Request, res: Response) => {
     try {
         const id = req.body.id
-        const buyer = req.body.buyer
-        const totalprice = req.body.totalPrice
-        const createdAt = req.body.createdAt
+        const buyerId = req.body.buyer_id
+        const totalPrice = req.body.total_price
         const paid = req.body.paid
 
 
         if (id !== undefined) {
             if(id !== "string"){
                 res.status(400)
-                throw new Error("There's no user with this id")
+                throw new Error("Invalid ID , must be a string")
             }
         }
 
-        if (buyer !== undefined) {
-            if(buyer !== "string"){
+        if (buyerId !== undefined) {
+            if(buyerId !== "string"){
                 res.status(400)
-                throw new Error("There's no product with this id")
+                throw new Error("Invalid Buyer.")
             }
         }
 
-        // if (productid * quantity !== totalprice) {
-        //     res.status(400)
-        //     throw new Error("Total prices doesn't match")
-        // }
-
-        await db.raw(`
-        INSERT INTO products (id, buyer, totalprice, createdAt, paid)
-        VALUES("${id}", "${buyer}", "${totalprice}, "${createdAt}", "${paid}");
-        `)
+        const newPurchase = {
+            id, 
+            buyerId, 
+            totalPrice,
+            paid, 
+        }
+        await db("purchase").insert(newPurchase)
         res.status(201).send("Purchase created sucesfully!")
+
     } catch (error: any) {
         console.log(error)
 
@@ -204,10 +227,7 @@ app.get('/products/:id', async (req: Request, res: Response) => {
     try {
         const id = req.params.id
 
-        const result = await db.raw(`
-        SELECT * FROM products
-        WHERE id = "${id}";
-        `)
+        const result = await db("purchases").where("id", "=", `${id}`)
 
         res.status(200).send(result)
     } catch (error: any) {
@@ -221,14 +241,12 @@ app.get('/products/:id', async (req: Request, res: Response) => {
     }
 })
 
-app.get('/users/:id/purchases', async (req: Request, res: Response) => {
+//GetPurchaseById
+app.get('/purchases/:id', async (req: Request, res: Response) => {
     try {
         const id = req.params.id
 
-        const result = await db.raw(`
-        SELECT * FROM purchases
-        WHERE id = "${id}";
-        `)
+        const result = await db("purchases").where("id", "=", `${id}`)
 
         res.status(200).send(result)
     } catch (error: any) {
@@ -242,170 +260,184 @@ app.get('/users/:id/purchases', async (req: Request, res: Response) => {
     }
 })
 
-// app.delete('/user/:id', (req: Request, res: Response) => {
-//     try {
-//         const id = req.params.id
 
-//         const indexToBeRemoved = users.findIndex((user) => user.id === id)
+//DeleteUserById
+app.delete('/user/:id', async (req: Request, res: Response) => {
+    try {
+        const idToDelete = req.params.id
 
-//         if (!indexToBeRemoved) {
-//             res.status(400)
-//             throw new Error("There's no user with this ID to remove")
-//         }
+        const [user] = await db("users").where({ id: idToDelete })
 
-//         if (indexToBeRemoved >= 0) {
-//             users.splice(indexToBeRemoved, 1)
-//         }
+        if (user) {
+            await db("users").del().where({ id: idToDelete })
+        } else {
+            res.status(404)
+            throw new Error("Invalid ID try again.");
+        }
+        res.status(200).send("User deleted successfully!")
+    } catch (error: any) {
+        console.log(error)
 
-//         res.status(200).send("User deleted successfully!")
-//     } catch (error: any) {
-//         console.log(error)
+        if (res.statusCode === 200) {
+            res.status(500)
+        }
 
-//         if (res.statusCode === 200) {
-//             res.status(500)
-//         }
+        res.send(error.message)
+    }
+})
 
-//         res.send(error.message)
-//     }
-// })
 
-// app.delete('/product/:id', (req: Request, res: Response) => {
-//     try {
-//         const id = req.params.id
+//DeleteProductById
+app.delete('/product/:id', async (req: Request, res: Response) => {
+    try {
+        const idToDelete = req.params.id
 
-//         const indexToBeRemoved = products.findIndex((product) => product.id === id)
+        const [product] = await db("products").where({ id: idToDelete })
 
-//         if (!indexToBeRemoved) {
-//             res.status(400)
-//             throw new Error("There's no product with this ID to remove")
-//         }
+        if (product) {
+            await db("products").del().where({ id: idToDelete })
+        } else {
+            res.status(404)
+            throw new Error("Invalid ID try again.");
+        }
+        res.status(200).send("Product deleted successfully!")
 
-//         if (indexToBeRemoved >= 0) {
-//             products.splice(indexToBeRemoved, 1)
-//         }
+    } catch (error: any) {
+        console.log(error)
 
-//         res.status(200).send("Product deleted successfully!")
-//     } catch (error: any) {
-//         console.log(error)
+        if (res.statusCode === 200) {
+            res.status(500)
+        }
 
-//         if (res.statusCode === 200) {
-//             res.status(500)
-//         }
+        res.send(error.message)
+    }
+})
 
-//         res.send(error.message)
-//     }
-// })
 
-// app.put('/user/:id', (req: Request, res: Response) => {
-//     try {
-//         const id = req.params.id
+//EditUserByID
+app.put('/user/:id', async (req: Request, res: Response) => {
+    try {
+        const idToEdit = req.params.id
 
-//         const newId = req.body.id as string | undefined
-//         const newEmail = req.body.email as string | undefined
-//         const newPassword = req.body.password as string | undefined
+        const newId = req.body.id
+        const newName = req.body.name
+        const newPassword = req.body.password
 
-//         if (newId !== undefined) {
-//             if (id === newId) {
-//                 res.status(400)
-//                 throw new Error("You already have this ID")
-//             }
-//             for (let user of users) {
-//                 if (user.id === newId) {
-//                     res.status(400)
-//                     throw new Error("This ID already exists")
-//                 }
-//             }
-//         }
+        if (newId !== undefined) {
+            if (typeof newId !== "string") {
+                res.status(400)
+                throw new Error("Invalid ID, must be a string")
+            }
 
-//         if (newEmail !== undefined) {
-//             for (let user of users) {
-//                 if (user.email === newEmail) {
-//                     res.status(400)
-//                     throw new Error("This email already exists")
-//                 }
-//             }
-//         }
+            if (newId.length < 1) {
+                res.status(400)
+                throw new Error("Invalid ID, must have at least 2 letters")
+            }
+        }
 
-//         const itemToBeEdited = users.find((user) => user.id === id)
+        if (newName !== undefined) {
+            if (typeof newName !== "string") {
+                res.status(400)
+                throw new Error("Invalid Name, must be a text")
+            }
 
-//         if (!itemToBeEdited) {
-//             res.status(400)
-//             throw new Error("This ID doesn't exist")
-//         }
+            if (newName.length < 1) {
+                res.status(400)
+                throw new Error("Invalid Name, must have at least 2 letters")
+            }
+        }
 
-//         if (itemToBeEdited) {
-//             itemToBeEdited.id = newId || itemToBeEdited.id
-//             itemToBeEdited.email = newEmail || itemToBeEdited.email
-//             itemToBeEdited.password = newPassword || itemToBeEdited.id
-//         }
+        const [user] = await db("users").where({ id: idToEdit })
 
-//         res.status(200).send("User edited successfully!")
-//     } catch (error: any) {
-//         console.log(error)
+        if (user) {
+            const updatedUser = {
+                id: newId || user.id,
+                name: newName || user.name,
+                password: newPassword || user.passowrd
+            }
+            await db("users")
+                .update(updatedUser)
+                .where({ id: idToEdit })
+        } else {
+            res.status(404)
+            throw new Error("Invalid ID, try again!")
+        }
 
-//         if (res.statusCode === 200) {
-//             res.status(500)
-//         }
 
-//         res.send(error.message)
-//     }
-// })
+        res.status(200).send("User edited successfully!")
+    } catch (error: any) {
+        console.log(error)
 
-// app.put('/product/:id', (req: Request, res: Response) => {
-//     try {
-//         const id = req.params.id
+        if (res.statusCode === 200) {
+            res.status(500)
+        }
 
-//         const newId = req.body.id as string | undefined
-//         const newName = req.body.name as string | undefined
-//         const newCategory = req.body.category as TCategory | undefined
+        res.send(error.message)
+    }
+})
 
-//         const newPrice = req.body.price as number
 
-//         if (newId !== undefined) {
-//             if (id === newId) {
-//                 res.status(400)
-//                 throw new Error("The product already have this ID")
-//             }
-//             for (let product of products) {
-//                 if (product.id === newId) {
-//                     res.status(400)
-//                     throw new Error("This ID already exists")
-//                 }
-//             }
-//         }
+//EdiProductById
+app.put('/product/:id', async (req: Request, res: Response) => {
+    try {
+        const idToEdit = req.params.id
 
-//         if (newName !== undefined) {
-//             for (let product of products) {
-//                 if (product.name === newName) {
-//                     res.status(400)
-//                     throw new Error("This name already exists")
-//                 }
-//             }
-//         }
+        const newId = req.body.id
+        const newName = req.body.name
+        const newPrice = req.body.price
+        const newDescription = req.body.description
+        const newImageUrl = req.body.imageURL
 
-//         const itemToBeEdited = products.find((product) => product.id === id)
+        if (newId !== undefined) {
+            if (typeof newId !== "string") {
+                res.status(400)
+                throw new Error("Invalid ID, must be a string")
+            }
 
-//         if (!itemToBeEdited) {
-//             res.status(400)
-//             throw new Error("This Product ID doesn't exist")
-//         }
+            if (newId.length < 1) {
+                res.status(400)
+                throw new Error("Invalid ID, must have at least 2 letters")
+            }
+        }
 
-//         if (itemToBeEdited) {
-//             itemToBeEdited.id = newId || itemToBeEdited.id
-//             itemToBeEdited.name = newName || itemToBeEdited.name
-//             itemToBeEdited.category = newCategory || itemToBeEdited.category
+        if (newName !== undefined) {
+            if (typeof newName !== "string") {
+                res.status(400)
+                throw new Error("Invalid Name, must be a text")
+            }
 
-//             itemToBeEdited.price = isNaN(newPrice) ? itemToBeEdited.price : newPrice
-//         }
+            if (newName.length < 1) {
+                res.status(400)
+                throw new Error("Invalid Name, must have at least 2 letters")
+            }
+        }
 
-//         res.status(200).send("Product edited successfully!")
-//     } catch (error: any) {
-//         console.log(error)
+        const [product] = await db("products").where({ id: idToEdit })
 
-//         if (res.statusCode === 200) {
-//             res.status(500)
-//         }
+        if (product) {
+            const updatedProduct = {
+                id: newId || product.id,
+                name: newName || product.name,
+                price: newPrice || product.price,
+                description: newDescription || product.description,
+                imageUrl: newImageUrl || product.imageUrl
+            }
+            await db("products")
+                .update(updatedProduct)
+                .where({ id: idToEdit })
+        } else {
+            res.status(404)
+            throw new Error("Invalid ID, try again!")
+        }
 
-//         res.send(error.message)
-//     }
-// })
+        res.status(200).send("Product edited successfully!")
+    } catch (error: any) {
+        console.log(error)
+
+        if (res.statusCode === 200) {
+            res.status(500)
+        }
+
+        res.send(error.message)
+    }
+});
