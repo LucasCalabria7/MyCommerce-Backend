@@ -27,6 +27,16 @@ CREATE TABLE
         FOREIGN KEY (buyer_id) REFERENCES users (id)
     );
 
+            --CreatePurchaseField
+        CREATE TABLE 
+        purchases_products(
+            purchase_id TEXT NOT NULL,
+            product_id TEXT NOT NULL,
+            quantity INTEGER NOT NULL,
+            FOREIGN KEY (purchase_id) REFERENCES purchases (id),
+            FOREIGN KEY (product_id) REFERENCES products (id)
+        );
+
     DROP TABLE users;
 
     --GetAllUsers
@@ -90,20 +100,6 @@ CREATE TABLE
         INNER JOIN purchases
         ON users.id = purchases.buyer_id
         WHERE users.id= "n1hy2";
-
-
-        --CreatePurchaseField
-        CREATE TABLE 
-        purchases_products(
-            purchase_id TEXT NOT NULL,
-            product_id TEXT NOT NULL,
-            quantity INTEGER NOT NULL,
-            FOREIGN KEY (purchase_id) REFERENCES purchases (id),
-            FOREIGN KEY (product_id) REFERENCES products (id)
-        );
-
-        DROP TABLE purchases_products;
-
 
         --CreateListOfPurchases
         INSERT INTO purchases_products (purchase_id, product_id, quantity)
