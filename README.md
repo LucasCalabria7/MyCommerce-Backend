@@ -1,6 +1,6 @@
-![preview](./readme-pic.png)
-
 # MyCommerce Back-End 
+
+![preview](./readme-pic.png)
 
 This project simulate perfectly an E-Commerce Back-End Application, Where trought a Restful API the developer can access and configure the data that it's coming from DataBase.( Users, Products and Purchases ). The methods chosen for this API were the CRUD one's so the user can create, read, uptade and delete information; all of them based on a day-to-day business environment.
 
