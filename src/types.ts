@@ -1,11 +1,6 @@
-export enum TCategory {
-    ACCESSORIES = "Acessórios",
-    CLOTHES_AND_SHOES = "Roupas e calçados",
-    ELECTRONICS = "Eletrônicos"
-}
-
 export type TUser = {
     id: string
+    name: string
     email: string 
     password: string 
 }
@@ -14,12 +9,29 @@ export type TProduct = {
     id: string 
     name: string
     price: number
-    category: TCategory
+    description: string 
+    imageUrl: string
 }
 
 export type TPurchase = {
-    userid: string 
-    productid: string
-    quantity: number
-    totalprice: number
+    id: string
+    buyer_id: string
+    total_price: number
+    paid: 0 | 1
+    createdAt: string
+}
+
+export type TPurchaseProducts = {
+    purchase_id: string
+    product_id: string
+    quantity: string
+}
+
+export type TPurchaseWithProducts = {
+    id: string
+    buyer_id: string
+    total_price: number
+    paid: 0 | 1
+    createdAt: string
+    listOfProducts: TProduct[]
 }
