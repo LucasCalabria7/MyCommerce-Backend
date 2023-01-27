@@ -21,7 +21,7 @@ CREATE TABLE
     purchases (
         id TEXT PRIMARY KEY UNIQUE NOT NULL,
         buyer_id TEXT NOT NULL,
-        total_price REAL UNIQUE NOT NULL,
+        total_price REAL NOT NULL,
         paid INTEGER NOT NULL,
         createdAt TEXT DEFAULT (DATETIME('now', 'localtime')) NOT NULL ,
         FOREIGN KEY (buyer_id) REFERENCES users (id)
@@ -37,7 +37,7 @@ CREATE TABLE
             FOREIGN KEY (product_id) REFERENCES products (id)
         );
 
-    DROP TABLE users;
+    DROP TABLE purchases;
 
     --GetAllUsers
     SELECT * FROM users;

@@ -34,9 +34,9 @@ app.get('/users', async (req: Request, res: Response) => {
 })
 
 //SearchUser
-app.get('/users/search', async (req: Request, res: Response) => {
+app.get('/users/search/:name', async (req: Request, res: Response) => {
     try {
-        const q = req.query.q as string
+        const q = req.params.name
 
         if (q !== undefined) {
             if (q.length <= 1) {
@@ -437,7 +437,7 @@ app.put('/product/:id', async (req: Request, res: Response) => {
             throw new Error("Invalid ID, try again!")
         }
 
-        res.status(200).send("Product edited successfully!")
+        res.status(200).send("Product updated successfully!")
     } catch (error: any) {
         console.log(error)
 
@@ -479,14 +479,14 @@ app.post('/purchases', async (req: Request, res: Response) => {
 
 
         if (id !== undefined) {
-            if (id !== "string") {
+            if (typeof id !== "string") {
                 res.status(400)
                 throw new Error("Invalid ID , must be a string")
             }
         }
 
         if (buyerId !== undefined) {
-            if (buyerId !== "string") {
+            if (typeof buyerId !== "string") {
                 res.status(400)
                 throw new Error("Invalid Buyer.")
             }
@@ -496,16 +496,16 @@ app.post('/purchases', async (req: Request, res: Response) => {
 
         if (purchase) {
             res.status(400)
-            throw new Error("This ID already exists")
+            throw new Error("Buyer ID not found")
         }
 
         const newPurchase = {
             id,
-            buyerId,
-            totalPrice,
+            buyer_id: buyerId,
+            total_price: totalPrice,
             paid,
         }
-        await db("purchase").insert(newPurchase)
+        await db("purchases").insert(newPurchase)
         res.status(201).send("Purchase created sucesfully!")
 
     } catch (error: any) {
@@ -586,7 +586,7 @@ app.put('/purchase/:id', async (req: Request, res: Response) => {
                 paid: newPaid || purchase.paid,
                 createdAt: newCreatedAt || purchase.createdAt
             }
-            await db("products")
+            await db("purchases")
                 .update(updatedProduct)
                 .where({ id: idToEdit })
         } else {
@@ -703,7 +703,7 @@ app.delete("/purchase/:purchaseId/products/:productId", async (req: Request, res
             .where({ purchase_id: purchaseIdToDelete })
             .andWhere({ product_id: productIdToDelete })
 
-        res.status(200).send(`Task deleted from user successfully`)
+        res.status(200).send(`Purchase deleted from user successfully`)
 
     } catch (error) {
         console.log(error)
@@ -724,7 +724,7 @@ app.delete("/purchase/:purchaseId/products/:productId", async (req: Request, res
 app.get("/purchaseproducts", async (req: Request, res: Response) => {
     try {
 
-        const purchases: TPurchase[] = await db("tasks")
+        const purchases: TPurchase[] = await db("purchases")
 
         const result: TPurchaseWithProducts[] = []
 
