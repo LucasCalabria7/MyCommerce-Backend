@@ -38,6 +38,6 @@ This project simulate perfectly an E-Commerce Back-End Application, Where trough
 ![SQL](https://img.shields.io/badge/SQL-blue?style=for-the-badge&logo=SQL&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-critical?style=for-the-badge&logo=SQLite&logoColor=white)
 ![Postmann](https://img.shields.io/badge/Postmann-323330?style=for-the-badge&logo=Postmann&logoColor=F7DF1E)
-![Knex](https://img.shields.io/badge/Knex-important?style=for-the-badge&logo=Knex&logoColor=F7DF1E)
+![Laravel](https://img.shields.io/badge/Laravel-important?style=for-the-badge&logo=Laravel&logoColor=F7DF1E)
 ![Git](https://img.shields.io/badge/Git-171515?style=for-the-badge&logo=Git&logoColor=white)
 
